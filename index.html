@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Review</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#249453">
+    <style>
+        body {
+        margin: 0;
+        min-height: 100vh;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* FIXED! */
+        font-family: Arial, sans-serif;
+        }
+
+
+
+        .überschrift-startseite {
+            text-align: center;
+            margin: 24px 0 12px;
+            background: rgba(9, 91, 54, 0.5);
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 12px;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+           
+        }
+
+        .liste{
+            padding: 0 16px 120px;
+        }
+
+        .film-card{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(9, 91, 54, 0.8);
+            border-radius: 16px;
+            padding: 12px;
+            margin: 12px 0;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .film-bild {
+            width: 70px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+
+        }
+
+        .film-text{
+            flex: 1;
+            
+        }
+
+        .film-name {
+            font-weight: 700;
+        }
+
+        .film-bewertung {
+            opacity: 0.9;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .bearbeiten {
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+        }
+
+        .hinzufügen {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            font-size: 28px;
+            
+        }
+
+        .button {
+            background-color: rgb(36, 148, 83);
+            box-shadow: 5px 2px 15px rgba(1, 41, 1, 0.5);
+            color: rgba(255, 255, 255, 0.8);
+
+        }
+
+
+        .form-container{
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 16px;
+        }
+
+        .form-container input{
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+        }
+        
+        input[type="file"]{
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        button{
+            border-radius: 12px;
+            border: none;
+        }
+
+        .done, .cancel, .delete{
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+        }
+
+        .back-button {
+            position: fixed;
+            right: 18px;   /* ganz rechts */
+            bottom: 18px;  /* ganz unten */
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            font-size: 24px;
+        }
+
+        .button {
+            background-color: rgb(36, 148, 83);
+            box-shadow: 5px 2px 15px rgba(1, 41, 1, 0.5);
+        }
+
+        #bg{
+            position: fixed;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+            }
+
+        #overlay{
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: -1;
+            }
+
+
+        
+    </style>
+  </head>
+
+  <body>
+    <div id="bg"></div>
+    <div id="overlay"></div>
+    <div id="home-view">
+        <h1 class="überschrift-startseite">Movie Reviews</h1>
+        <main class="liste" id="movie-list">
+            <div class="film-card">
+                <div class="film-bild">Film Bild</div>
+                <div class="film-text">
+                    <div class="film-name">Film Name</div>
+                    <div class="film-bewertung">Film Bewertung</div>
+                </div>
+                <button class="bearbeiten button" onclick="goToEdit()">✏️</button>
+            </div>            
+            
+        </main>
+        <button class="hinzufügen button" onclick="goToAdd()">＋</button>
+    </div>
+
+    <div id="add-view" style="display: none;">
+        <h1 class="überschrift-startseite">Add Movie</h1>
+        <div class="form-container">
+            <input id="add-image" type="file" accept="image/*">
+            <input id="add-name" type="text" placeholder="Movie Name">
+            <input id="add-rating" type="number" placeholder="Rating (0-10)" step="0.1" min="0" max="10">
+            <button class="button done" onclick="addMovie()">Done</button>
+            <button class="back-button button" onclick="goHome()">￩</button>
+        </div>
+    </div>
+
+    <div id="edit-view" style="display: none;">
+    <h1 class="überschrift-startseite">Edit Movie</h1>
+
+    <div class="form-container">
+        <input id="edit-image" type="file" accept="image/*">
+        <input id="edit-name" type="text" placeholder="Movie Name">
+        <input id="edit-rating" type="number" placeholder="Rating (0-10)" step="0.1" min="0" max="10">
+
+        <button class="button done" onclick="updateMovie()">Done</button>
+        <button class="back-button button" onclick="goHome()">￩</button>
+        <button class="button delete" onclick="deleteMovie()">🗑️</button>
+    </div>
+    </div>
+
+    <script>
+    let movies = JSON.parse(localStorage.getItem("movies") || "[]");
+    let currentEditIndex = null;
+    function saveMovies(){
+        localStorage.setItem("movies", JSON.stringify(movies));
+    }
+
+    function renderMovies(){
+        const list = document.getElementById("movie-list");
+        list.innerHTML = "";
+
+        movies.forEach((m, index) => {
+        const card = document.createElement("div");
+        card.className = "film-card";
+
+        const img = document.createElement("img");
+        img.className = "film-bild";
+        img.alt = "Poster";
+        img.src = m.image || "";
+        // Falls kein Bild da ist:
+        if(!m.image){
+            img.removeAttribute("src");
+            img.textContent = "No Image";
+        }
+
+        const text = document.createElement("div");
+        text.className = "film-text";
+        text.innerHTML = `
+            <div class="film-name">${m.name || "Untitled"}</div>
+            <div class="film-bewertung">${(m.rating ?? "") !== "" ? (m.rating + " / 10") : ""}</div>
+        `;
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "bearbeiten button";
+        editBtn.textContent = "✏️";
+        editBtn.onclick = () => goToEdit(index);
+
+        card.appendChild(img);
+        card.appendChild(text);
+        card.appendChild(editBtn);
+        list.appendChild(card);
+        });
+    }
+
+    function goToAdd(){
+        clearAddForm(); // <-- neu
+        document.getElementById("home-view").style.display = "none";
+        document.getElementById("add-view").style.display = "block";
+        document.getElementById("edit-view").style.display = "none";
+        setBackground("img/bild2.jpeg");
+    }
+
+    function goHome(){
+        clearAddForm(); // <-- neu
+        document.getElementById("add-view").style.display = "none";
+        document.getElementById("edit-view").style.display = "none";
+        document.getElementById("home-view").style.display = "block";
+        setBackground("img/bild1.jpeg");
+    }
+
+    function addMovie(){
+        const name = document.getElementById("add-name").value.trim();
+        const ratingVal = document.getElementById("add-rating").value;
+        const rating = ratingVal === "" ? "" : Number(ratingVal);
+
+        const fileInput = document.getElementById("add-image");
+        const file = fileInput.files && fileInput.files[0];
+
+        // Wenn kein Bild ausgewählt wurde:
+        if(!file){
+        movies.unshift({ name, rating, image: "" }); // ganz oben einfügen
+        saveMovies();
+        renderMovies();
+        // Formular leeren
+        document.getElementById("add-name").value = "";
+        document.getElementById("add-rating").value = "";
+        document.getElementById("add-image").value = "";
+        goHome();
+        return;
+        }
+
+        // Bild als DataURL speichern
+        const reader = new FileReader();
+        reader.onload = () => {
+        movies.unshift({ name, rating, image: reader.result });
+        saveMovies();
+        renderMovies();
+        // Formular leeren
+        document.getElementById("add-name").value = "";
+        document.getElementById("add-rating").value = "";
+        document.getElementById("add-image").value = "";
+        goHome();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Beim Laden direkt anzeigen
+    renderMovies();
+
+    function goToEdit(index){
+        currentEditIndex = index;
+
+        const movie = movies[index];
+
+        document.getElementById("edit-name").value = movie.name || "";
+        document.getElementById("edit-rating").value = movie.rating || "";
+
+        document.getElementById("home-view").style.display = "none";
+        document.getElementById("add-view").style.display = "none";
+        document.getElementById("edit-view").style.display = "block";
+        setBackground("img/bild3.jpeg");
+    }
+
+    function updateMovie(){
+        const name = document.getElementById("edit-name").value.trim();
+        const ratingVal = document.getElementById("edit-rating").value;
+        const rating = ratingVal === "" ? "" : Number(ratingVal);
+
+        const fileInput = document.getElementById("edit-image");
+        const file = fileInput.files && fileInput.files[0];
+
+        if(file){
+            const reader = new FileReader();
+            reader.onload = () => {
+            movies[currentEditIndex] = {
+                name,
+                rating,
+                image: reader.result
+            };
+            saveMovies();
+            renderMovies();
+            goHome();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            movies[currentEditIndex].name = name;
+            movies[currentEditIndex].rating = rating;
+            saveMovies();
+            renderMovies();
+            goHome();
+        }
+    }
+
+    function deleteMovie(){
+        if (currentEditIndex === null) return;
+
+        movies.splice(currentEditIndex, 1); // löscht 1 Eintrag an der Stelle
+        saveMovies();
+        renderMovies();
+        goHome();
+        }
+
+    function clearAddForm(){
+        document.getElementById("add-name").value = "";
+        document.getElementById("add-rating").value = "";
+        document.getElementById("add-image").value = "";
+    }
+
+
+    function setBackground(imagePath){
+        document.getElementById("bg").style.backgroundImage = `url(${imagePath})`;
+    }
+
+
+    // Optional: sicherstellen, dass die Startseite sichtbar ist
+    document.getElementById("home-view").style.display = "block";
+    document.getElementById("add-view").style.display = "none";
+    document.getElementById("edit-view").style.display = "none";
+
+    setBackground("img/bild1.jpeg");
+
+
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js");
+    }
+
+
+    </script>
+
+    
+
+    
+    
+
+  </body>
+</html>
